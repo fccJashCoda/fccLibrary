@@ -18,31 +18,31 @@ suite('Functional Tests', function () {
    * ----[EXAMPLE TEST]----
    * Each test should completely test the response of the API end-point including response status code!
    */
-  test('#example Test GET /api/books', function (done) {
-    chai
-      .request(server)
-      .get('/api/books')
-      .end(function (err, res) {
-        assert.equal(res.status, 200);
-        assert.isArray(res.body, 'response should be an array');
-        assert.property(
-          res.body[0],
-          'commentcount',
-          'Books in array should contain commentcount'
-        );
-        assert.property(
-          res.body[0],
-          'title',
-          'Books in array should contain title'
-        );
-        assert.property(
-          res.body[0],
-          '_id',
-          'Books in array should contain _id'
-        );
-        done();
-      });
-  });
+  // test('#example Test GET /api/books', function (done) {
+  //   chai
+  //     .request(server)
+  //     .get('/api/books')
+  //     .end(function (err, res) {
+  //       assert.equal(res.status, 200);
+  //       assert.isArray(res.body, 'response should be an array');
+  //       assert.property(
+  //         res.body[0],
+  //         'commentcount',
+  //         'Books in array should contain commentcount'
+  //       );
+  //       assert.property(
+  //         res.body[0],
+  //         'title',
+  //         'Books in array should contain title'
+  //       );
+  //       assert.property(
+  //         res.body[0],
+  //         '_id',
+  //         'Books in array should contain _id'
+  //       );
+  //       done();
+  //     });
+  // });
   /*
    * ----[END of EXAMPLE TEST]----
    */
@@ -84,12 +84,12 @@ suite('Functional Tests', function () {
               );
               assert.equal(
                 res.body.title,
-                'Moby dick',
+                'Moby Dick',
                 'the title of the book should be the same as the requested book'
               );
-              id = req.body._id;
+              id = res.body._id;
+              done();
             });
-          done();
         });
 
         test('Test POST /api/books with no title given', function (done) {
@@ -98,14 +98,14 @@ suite('Functional Tests', function () {
             .post('/api/books')
             .end(function (err, res) {
               assert.equal(res.status, 200);
-              assert.isString(res.body, 'response should be a string');
+              assert.isString(res.text, 'response should be a string');
               assert.equal(
-                res.body,
+                res.text,
                 'missing required field title',
                 'should return missing required field title'
               );
+              done();
             });
-          done();
         });
       }
     );
@@ -133,8 +133,8 @@ suite('Functional Tests', function () {
               '_id',
               'Books in array should contain _id'
             );
+            done();
           });
-        done();
       });
     });
 
@@ -145,14 +145,14 @@ suite('Functional Tests', function () {
           .get('/api/books/5ff49ed9ea32b206c8eecccc')
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.isString(res.body, 'response should be a string');
+            assert.isString(res.text, 'response should be a string');
             assert.equal(
-              res.body,
+              res.text,
               'no book exists',
               'response should be "no book exists"'
             );
+            done();
           });
-        done();
       });
 
       test('Test GET /api/books/[id] with valid id in db', function (done) {
@@ -177,8 +177,8 @@ suite('Functional Tests', function () {
               '_id',
               'response should contain the books _id'
             );
+            done();
           });
-        done();
       });
     });
 
@@ -221,8 +221,8 @@ suite('Functional Tests', function () {
                 'Hello there',
                 'the first comment in the comments array is identical to the one sent'
               );
+              done();
             });
-          done();
         });
 
         test('Test POST /api/books/[id] without comment field', function (done) {
@@ -231,14 +231,14 @@ suite('Functional Tests', function () {
             .post(`/api/books/${id}`)
             .end(function (err, res) {
               assert.equal(res.status, 200);
-              assert.isString(res.body, 'the response is a string');
+              assert.isString(res.text, 'the response is a string');
               assert.equal(
-                res.body,
+                res.text,
                 'missing required field comment',
                 'returns the correct error message'
               );
+              done();
             });
-          done();
         });
 
         test('Test POST /api/books/[id] with comment, id not in db', function (done) {
@@ -247,18 +247,18 @@ suite('Functional Tests', function () {
           };
           chai
             .request(server)
-            .post(`/api/books/${id}`)
+            .post(`/api/books/5ff4e554b319565fb092cccc`)
             .send(comment)
             .end(function (err, res) {
               assert.equal(res.status, 200);
-              assert.isString(res.body, 'the response is a string');
+              assert.isString(res.text, 'the response is a string');
               assert.equal(
-                res.body,
+                res.text,
                 'no book exists',
                 'returns the correct error message'
               );
+              done();
             });
-          done();
         });
       }
     );
@@ -267,17 +267,17 @@ suite('Functional Tests', function () {
       test('Test DELETE /api/books/[id] with valid id in db', function (done) {
         chai
           .request(server)
-          .post(`/api/books/${id}`)
+          .delete(`/api/books/${id}`)
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.isString(res.body, 'the response is a string');
+            assert.isString(res.text, 'the response is a string');
             assert.equal(
-              res.body,
+              res.text,
               'delete successful',
               'returns the correct success message'
             );
+            done();
           });
-        done();
       });
 
       test('Test DELETE /api/books/[id] with  id not in db', function (done) {
@@ -286,14 +286,14 @@ suite('Functional Tests', function () {
           .delete(`/api/books/${id}`)
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.isString(res.body, 'the response is a string');
+            assert.isString(res.text, 'the response is a string');
             assert.equal(
-              res.body,
+              res.text,
               'no book exists',
               'returns the correct error message'
             );
+            done();
           });
-        done();
       });
     });
   });

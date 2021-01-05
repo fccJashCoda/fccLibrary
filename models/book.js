@@ -16,10 +16,5 @@ const bookSchema = new Schema({
   },
 });
 
-bookSchena.pre('save', function (next) {
-  this.commentcount = this.comments.length;
-  next();
-});
-
 const Book = mongoose.model('Book', bookSchema);
 module.exports = Book;
